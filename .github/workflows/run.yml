@@ -7,9 +7,7 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "0 4 * * *"
-      timezone: "Asia/Shanghai"  # 指定时区
-    - cron: "0 10 * * *"
-      timezone: "Asia/Shanghai"  # 同上
+      timezone: "Asia/Shanghai"  # 按需调整时区
 
 jobs:
   build-and-deploy:
