@@ -105,10 +105,13 @@ async function main() {
       logger.error(`账号 ${userMask} 执行失败：`, e);
     } finally {
       logger.info(`账号 ${userMask} 执行完毕\n`);
+      
+      // 添加2秒延迟（新增部分）
+      await delay(2000); // <-- 这里添加延迟
     }
   }
 
-  // 生成汇总报告
+  // 生成汇总报告（保持原样）
   if (capacitySummary.length > 0) {
     const summaryHeader = [
       "┌───────────────┬───────────────┐",
@@ -130,7 +133,7 @@ async function main() {
   }
 }
 
-// 启动执行
+// 启动执行（保持原样）
 (async () => {
   try {
     await main();
