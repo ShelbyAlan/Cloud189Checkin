@@ -40,15 +40,23 @@ const doTask = async (cloudClient) => {
   return result;
 };
 
+// ✨ 修改点：家庭签到函数重构
 const doFamilyTask = async (cloudClient) => {
   const result = [];
   try {
     const { familyInfoResp } = await cloudClient.getFamilyList();
     if (familyInfoResp) {
-      for (const family of familyInfoResp) {
-        const res = await cloudClient.familyUserSign(family.familyId);
-        result.push(`家庭空间${family.familyId.slice(-4)}：${
+      // 精准匹配目标家庭ID
+      const targetFamily = familyInfoResp.find(
+        family => family.familyId === '300000633948588' // 字符串类型匹配
+      );
+      
+      if (targetFamily) {
+        const res = await cloudClient.familyUserSign(targetFamily.familyId);
+        result.push(`家庭空间${targetFamily.familyId.slice(-4)}：${
           res.signStatus ? "已经签到过了，" : ""}获得${res.bonusSpace}M空间`);
+      } else {
+        result.push("⚠️ 未找到指定家庭空间 300000633948588");
       }
     }
   } catch (e) {
@@ -60,6 +68,10 @@ const doFamilyTask = async (cloudClient) => {
 // 推送功能（保持原样）
 const push = (title, desp) => {
   /* 原有推送实现 */
+  // serverChan.push(title, desp);
+  // telegramBot.push(title, desp);
+  // wecomBot.push(title, desp);
+  // wxpush.push(title, desp);
 };
 
 // 主执行流程
@@ -105,13 +117,11 @@ async function main() {
       logger.error(`账号 ${userMask} 执行失败：`, e);
     } finally {
       logger.info(`账号 ${userMask} 执行完毕\n`);
-      
-      // 添加2秒延迟（新增部分）
-      await delay(2000); // <-- 这里添加延迟
+      await delay(2000); // 请求间隔保护
     }
   }
 
-  // 生成汇总报告（保持原样）
+  // 生成汇总报告
   if (capacitySummary.length > 0) {
     const summaryHeader = [
       "┌───────────────┬───────────────┐",
@@ -133,7 +143,7 @@ async function main() {
   }
 }
 
-// 启动执行（保持原样）
+// 启动执行
 (async () => {
   try {
     await main();
